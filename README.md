@@ -1,4 +1,4 @@
-# Realtime-FaceRegnize
+# Realtime-FaceRecognize
 Realtime face recognize using [Azure Cognitive Service Face API](https://azure.microsoft.com/ja-jp/services/cognitive-services/face/).
 
 ## Requirement
