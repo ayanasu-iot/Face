@@ -1,7 +1,7 @@
+from picamera import PiCamera
 import http.client
 import json
 import urllib
-import cv2
 import time
 import settings
 
@@ -12,7 +12,8 @@ headers = {
 }
 
 write_file_name = './tmp.jpg'
-cap = cv2.VideoCapture(0)
+camera = PiCamera()
+camera.resolution = (800, 600)
 
 params = urllib.parse.urlencode({
     'returnFaceId': 'false',
@@ -21,12 +22,7 @@ params = urllib.parse.urlencode({
 })
 
 while True:
-    k = cv2.waitKey(1)
-    if k == 27:
-        print()
-        break
-    ret, frame = cap.read()
-    cv2.imwrite(write_file_name, frame)
+    camera.capture(write_file_name)
     with open(write_file_name, 'rb') as f:
         img = f.read()
 
@@ -48,5 +44,3 @@ while True:
 
     con.close()
     time.sleep(5)
-cap.release()
-cv2.destroyAllWindows()
