@@ -18,6 +18,7 @@ params = urllib.parse.urlencode({
     'returnFaceAttributes': 'emotion',
 })
 camera = picamera.PiCamera()
+DISPLAY_URL = "http://f1ee1c4a.ngrok.io/api/v1/face"
 FILE_NAME = './tmp.jpg'
 BUTTON_PIN = 14
 
@@ -42,17 +43,20 @@ def callback(channel):
     print(settings.API)
     con = requests.request("POST", settings.API, headers=headers, params=params, data=img)
     data = json.loads(con.text)
+    emotions = []
     for i in data:
         anger = i["faceAttributes"]["emotion"]["anger"]
         happiness = i["faceAttributes"]["emotion"]["happiness"]
         neutral = i["faceAttributes"]["emotion"]["neutral"]
         sadness = i["faceAttributes"]["emotion"]["sadness"]
         suprise = i["faceAttributes"]["emotion"]["surprise"]
-        print("anger:{0}".format(anger))
-        print("happiness:{0}".format(happiness))
-        print("neutral:{0}".format(neutral))
-        print("sadness:{0}".format(sadness))
-        print("surprise:{0}".format(suprise))
+        emotions.extend([anger, happiness, neutral, sadness, suprise])
+        # print("anger:{0}".format(anger))
+        # print("happiness:{0}".format(happiness))
+        # print("neutral:{0}".format(neutral))
+        # print("sadness:{0}".format(sadness))
+        # print("surprise:{0}".format(suprise))
+        print(max(emotions))
 
 
 if __name__ == "__main__":
