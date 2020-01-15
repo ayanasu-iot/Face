@@ -30,7 +30,7 @@ def main():
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, callback=callback, bouncetime=300)
     try:
-        while(True):
+        while True:
             time.sleep(1)
     except KeyboardInterrupt:
         GPIO.cleanup()
@@ -41,22 +41,12 @@ def callback(channel):
     with open(FILE_NAME, 'rb') as f:
         img = f.read()
     print(settings.API)
+    print(channel)
     con = requests.request("POST", settings.API, headers=headers, params=params, data=img)
     data = json.loads(con.text)
-    emotions = []
     for i in data:
-        anger = i["faceAttributes"]["emotion"]["anger"]
-        happiness = i["faceAttributes"]["emotion"]["happiness"]
-        neutral = i["faceAttributes"]["emotion"]["neutral"]
-        sadness = i["faceAttributes"]["emotion"]["sadness"]
-        suprise = i["faceAttributes"]["emotion"]["surprise"]
-        emotions.extend([anger, happiness, neutral, sadness, suprise])
-        # print("anger:{0}".format(anger))
-        # print("happiness:{0}".format(happiness))
-        # print("neutral:{0}".format(neutral))
-        # print("sadness:{0}".format(sadness))
-        # print("surprise:{0}".format(suprise))
-        print(max(emotions))
+        emotion = i["faceAttributes"]["emotion"]
+        print(max(emotion, key=emotion.get))
 
 
 if __name__ == "__main__":
