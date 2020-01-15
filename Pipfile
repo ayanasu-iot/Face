@@ -6,8 +6,6 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-matplotlib = "==3.1.2"
-opencv-python = "==4.1.2.30"
 python-dotenv = "==0.10.3"
 requests = "==2.22.0"
 

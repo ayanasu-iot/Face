@@ -1,15 +1,10 @@
-import picamera
-import json
-import settings
-import asyncio
-import io
-import glob
-import os
-import sys
 import time
-import uuid
+import json
+import picamera
+import RPi.GPIO as GPIO
 import requests
 import urllib.parse
+import settings
 
 
 headers = {
@@ -17,20 +12,32 @@ headers = {
     'Content-Type': 'application/octet-stream',
     'Ocp-Apim-Subscription-Key': settings.KEY,
 }
-
-write_file_name = './tmp.jpg'
-camera = picamera.PiCamera()
-camera.resolution = (800, 600)
-
 params = urllib.parse.urlencode({
     'returnFaceId': 'false',
     'returnFaceLandmarks': 'false',
     'returnFaceAttributes': 'emotion',
 })
+camera = picamera.PiCamera()
+FILE_NAME = './tmp.jpg'
+BUTTON_PIN = 14
 
-while True:
-    camera.capture(write_file_name)
-    with open(write_file_name, 'rb') as f:
+
+def main():
+    camera.resolution = (800, 600)
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, callback=callback, bouncetime=300)
+    try:
+        while(True):
+            time.sleep(1)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+
+
+def callback(channel):
+    camera.capture(FILE_NAME)
+    with open(FILE_NAME, 'rb') as f:
         img = f.read()
     print(settings.API)
     con = requests.request("POST", settings.API, headers=headers, params=params, data=img)
@@ -47,4 +54,6 @@ while True:
         print("sadness:{0}".format(sadness))
         print("surprise:{0}".format(suprise))
 
-    time.sleep(5)
+
+if __name__ == "__main__":
+    main()
