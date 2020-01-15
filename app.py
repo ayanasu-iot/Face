@@ -45,8 +45,10 @@ def callback(channel):
     con = requests.request("POST", settings.API, headers=headers, params=params, data=img)
     data = json.loads(con.text)
     for i in data:
-        emotion = i["faceAttributes"]["emotion"]
-        print(max(emotion, key=emotion.get))
+        emotions = i["faceAttributes"]["emotion"]
+        emotion = max(emotions, key=emotions.get)
+        if emotion != "":
+            requests.get(DISPLAY_URL, params=urllib.parse.urlencode({"emotion": emotion}))
 
 
 if __name__ == "__main__":
