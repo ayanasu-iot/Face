@@ -1,9 +1,16 @@
-from picamera import PiCamera
-import http.client
+import picamera
 import json
-import urllib
-import time
 import settings
+import asyncio
+import io
+import glob
+import os
+import sys
+import time
+import uuid
+import requests
+import urllib.parse
+
 
 headers = {
     # Request headers
@@ -12,7 +19,7 @@ headers = {
 }
 
 write_file_name = './tmp.jpg'
-camera = PiCamera()
+camera = picamera.PiCamera()
 camera.resolution = (800, 600)
 
 params = urllib.parse.urlencode({
@@ -25,11 +32,9 @@ while True:
     camera.capture(write_file_name)
     with open(write_file_name, 'rb') as f:
         img = f.read()
-
-    con = http.client.HTTPSConnection(settings.API)
-    con.request('POST', '/face/v1.0/detect?%s' % params, img, headers)
-    response = con.getresponse()
-    data = json.loads(response.read())
+    print(settings.API)
+    con = requests.request("POST", settings.API, headers=headers, params=params, data=img)
+    data = json.loads(con.text)
     for i in data:
         anger = i["faceAttributes"]["emotion"]["anger"]
         happiness = i["faceAttributes"]["emotion"]["happiness"]
@@ -42,5 +47,4 @@ while True:
         print("sadness:{0}".format(sadness))
         print("surprise:{0}".format(suprise))
 
-    con.close()
     time.sleep(5)
