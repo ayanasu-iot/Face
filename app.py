@@ -18,7 +18,7 @@ params = urllib.parse.urlencode({
     'returnFaceAttributes': 'emotion',
 })
 camera = picamera.PiCamera()
-DISPLAY_URL = "http://f1ee1c4a.ngrok.io/api/v1/face"
+DISPLAY_URL = "http://raspberrypi2.local/api/v1/face"
 FILE_NAME = './tmp.jpg'
 BUTTON_PIN = 14
 
@@ -31,7 +31,7 @@ def main():
     GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, callback=callback, bouncetime=300)
     try:
         while True:
-            time.sleep(1)
+            time.sleep(0.1)
     except KeyboardInterrupt:
         GPIO.cleanup()
 
@@ -45,8 +45,10 @@ def callback(channel):
     con = requests.request("POST", settings.API, headers=headers, params=params, data=img)
     data = json.loads(con.text)
     for i in data:
+        print("Taken face")
         emotions = i["faceAttributes"]["emotion"]
         emotion = max(emotions, key=emotions.get)
+        print(emotion)
         if emotion != "":
             requests.get(DISPLAY_URL, params=urllib.parse.urlencode({"emotion": emotion}))
 
