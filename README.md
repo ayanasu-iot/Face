@@ -21,7 +21,7 @@ $ pipenv install
 
 ## License
 
-[GPL-3.0](https://github.com/ayanasu-iot/Face/blob/master/LICENSE)
+See [LICENSE](https://github.com/ayanasu-iot/Face/blob/master/LICENSE).
 
 ## Author
 
